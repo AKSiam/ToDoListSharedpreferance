@@ -6,11 +6,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolistsharedpreferance.adapter.TaskAdapter
@@ -21,15 +18,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editTaskEditTaxts: EditText
+    private lateinit var editTaskEditTaxt: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sharedPreferences = getSharedPreferences("Tasks", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("TaskPrefs", Context.MODE_PRIVATE)
 
         recyclerView = findViewById(R.id.recyclerView)
-        editTaskEditTaxts = findViewById(R.id.editTaskEt)
+        editTaskEditTaxt = findViewById(R.id.editTaskEt)
         taskList = retrieveTasks()
 
 
@@ -37,13 +34,13 @@ class MainActivity : AppCompatActivity() {
         val saveButton: Button = findViewById(R.id.saveEt)
 
         saveButton.setOnClickListener {
-            val taskTitle = editTaskEditTaxts.text.toString()
+            val taskTitle = editTaskEditTaxt.text.toString()
             if (taskTitle.isNotEmpty()) {
-                val task = Task(taskTitle, false)
-                saveTask(taskList)
-                taskList.add(task)
+                val newTask = Task(taskTitle, false)
+                saveTask(newTask)
+                taskList.add(newTask)
                 taskAdapter.notifyItemInserted(taskList.size - 1)
-                editTaskEditTaxts.text.clear()
+                editTaskEditTaxt.text.clear()
 
             }
             else{
@@ -53,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         }
         taskAdapter = TaskAdapter(taskList, object : TaskAdapter.TaskClickListen {
             override fun onEditClick(position: Int) {
-                editTaskEditTaxts.setText(taskList[position].title)
+                editTaskEditTaxt.setText(taskList[position].title)
                 taskList.removeAt(position)
                 taskAdapter.notifyItemRemoved(position)
             }
@@ -65,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 alertDialog.setPositiveButton("Yes") { _, _ ->
                     deleteTask(position)
                 }
-                alertDialog.setNegativeButton("No") { dialog, _ ->}
+                alertDialog.setNegativeButton("No") { _, _ ->}
                 alertDialog.show()
 
             }
@@ -79,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun saveTask(taskList: MutableList<Task>) {
+    private fun saveTask(newTask: Task) {
         val editor = sharedPreferences.edit()
         val taskset = HashSet<String>()
 
@@ -93,6 +90,10 @@ class MainActivity : AppCompatActivity() {
         taskList.removeAt(position)
         taskAdapter.notifyItemRemoved(position)
         saveTask(taskList)
+
+    }
+
+    private fun saveTask(newTask: MutableList<Task>) {
 
     }
 
